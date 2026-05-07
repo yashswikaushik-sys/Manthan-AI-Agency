@@ -1,0 +1,10 @@
+[
+  {
+    "id": "CH-001",
+    "date": "2026-05-03",
+    "category": "setup",
+    "challenge": "GitHub integration lacked write access, blocking push",
+    "resolution": "Granted Contents: write permission to GitHub App",
+    "status": "resolved"
+  }
+]

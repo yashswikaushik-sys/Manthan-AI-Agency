@@ -1,0 +1,11 @@
+{
+  "vault": "manthan-agency",
+  "provider": "bitwarden",
+  "status": "not_configured",
+  "collections": [
+    { "name": "api-keys", "items": ["anthropic", "openai", "notion", "airtable"] },
+    { "name": "client-credentials", "items": [] },
+    { "name": "infrastructure", "items": [] }
+  ],
+  "note": "Setup: bw login && bw unlock"
+}
