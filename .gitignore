@@ -3,3 +3,10 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+node_modules/
+*.db
+*.db-shm
+*.db-wal
+workspace/
+*.log
+.DS_Store

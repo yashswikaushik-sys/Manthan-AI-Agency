@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Manthan Agency OS</title>
+<link rel="stylesheet" href="/assets/styles.css" />
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ═════════════════ SIDEBAR ═════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">M</div>
+        <div>
+          <div class="logo-text">Manthan</div>
+          <div class="logo-sub">Agency OS</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav" id="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <button class="nav-item active" data-screen="dashboard"><i data-lucide="layout-dashboard" class="nav-icon"></i><span>Dashboard</span></button>
+      <button class="nav-item" data-screen="morning-brief"><i data-lucide="sun" class="nav-icon"></i><span>Morning Brief</span></button>
+      <button class="nav-item" data-screen="chat"><i data-lucide="message-square" class="nav-icon"></i><span>Chat</span><span class="nav-badge amber">AI</span></button>
+
+      <div class="nav-section-label">Clients</div>
+      <button class="nav-item" data-screen="clients"><i data-lucide="users" class="nav-icon"></i><span>Clients</span></button>
+      <button class="nav-item" data-screen="brands"><i data-lucide="git-branch" class="nav-icon"></i><span>Brands</span></button>
+      <button class="nav-item" data-screen="approvals"><i data-lucide="check-square" class="nav-icon"></i><span>Approvals</span><span class="nav-badge" id="approvals-badge" style="display:none">0</span></button>
+      <button class="nav-item" data-screen="deliverables"><i data-lucide="package" class="nav-icon"></i><span>Deliverables</span></button>
+
+      <div class="nav-section-label">Production</div>
+      <button class="nav-item" data-screen="content-calendar"><i data-lucide="calendar" class="nav-icon"></i><span>Calendar</span></button>
+      <button class="nav-item" data-screen="workbench"><i data-lucide="wrench" class="nav-icon"></i><span>Workbench</span></button>
+      <button class="nav-item" data-screen="lead-pipeline"><i data-lucide="target" class="nav-icon"></i><span>Lead Pipeline</span></button>
+      <button class="nav-item" data-screen="projects"><i data-lucide="folder-kanban" class="nav-icon"></i><span>Projects</span></button>
+
+      <div class="nav-section-label">Intelligence</div>
+      <button class="nav-item" data-screen="reports"><i data-lucide="bar-chart-3" class="nav-icon"></i><span>Reports</span></button>
+      <button class="nav-item" data-screen="knowledge-base"><i data-lucide="book-open" class="nav-icon"></i><span>Knowledge Base</span></button>
+      <button class="nav-item" data-screen="agents-console"><i data-lucide="bot" class="nav-icon"></i><span>Agents</span></button>
+
+      <div class="nav-section-label">Operations</div>
+      <button class="nav-item" data-screen="workflows"><i data-lucide="zap" class="nav-icon"></i><span>n8n Workflows</span></button>
+      <button class="nav-item" data-screen="connector-map"><i data-lucide="network" class="nav-icon"></i><span>Connector Map</span></button>
+      <button class="nav-item" data-screen="finance"><i data-lucide="indian-rupee" class="nav-icon"></i><span>Finance</span></button>
+      <button class="nav-item" data-screen="sops"><i data-lucide="file-text" class="nav-icon"></i><span>SOPs</span></button>
+
+      <div class="nav-section-label">System</div>
+      <button class="nav-item" data-screen="settings"><i data-lucide="settings" class="nav-icon"></i><span>Settings</span></button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <span class="status-dot live" id="system-status-dot"></span>
+        <span id="system-status-text">All systems operational</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═════════════════ MAIN AREA ═════════════════ -->
+  <main class="main-area">
+    <header class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-spacer"></div>
+
+      <button class="topbar-search" onclick="openSearch()">
+        <i data-lucide="search" style="width:14px;height:14px"></i>
+        <span>Search anything</span>
+        <span style="margin-left:auto; font-size:0.625rem; padding:1px 5px; background:var(--surface-3); border-radius:4px">⌘K</span>
+      </button>
+
+      <div class="topbar-actions">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('chat')">
+          <i data-lucide="zap" style="width:14px;height:14px"></i>
+          Quick Ask
+        </button>
+        <button class="notif-btn" onclick="toggleNotifications()">
+          <i data-lucide="bell" style="width:16px;height:16px"></i>
+          <span class="notif-count" id="notif-count" style="display:none">0</span>
+        </button>
+        <button class="btn-icon btn btn-ghost" onclick="toggleTheme()" title="Toggle theme">
+          <i data-lucide="moon" style="width:16px;height:16px" id="theme-icon"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-area" id="content-area">
+
+      <!-- ═══════════ DASHBOARD ═══════════ -->
+      <section class="screen" id="screen-dashboard">
+        <div class="page-header">
+          <h1 class="page-title">Welcome back, Yash</h1>
+          <p class="page-desc" id="dashboard-greeting">Loading your agency overview...</p>
+        </div>
+        <div class="kpi-grid" id="dashboard-kpis"></div>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Active Clients</div>
+                <div class="card-subtitle">Health overview</div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="navigate('clients')">View all →</button>
+            </div>
+            <div id="dashboard-clients"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Recent Activity</div>
+                <div class="card-subtitle">Last 24 hours</div>
+              </div>
+            </div>
+            <div id="dashboard-activity"></div>
+          </div>
+        </div>
+        <div class="card mt-6">
+          <div class="card-header">
+            <div>
+              <div class="card-title">System Health</div>
+              <div class="card-subtitle">All integrations and agents</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="navigate('connector-map')">Connector Map →</button>
+          </div>
+          <div id="dashboard-system" class="grid grid-3"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════ MORNING BRIEF ═══════════ -->
+      <section class="screen hidden" id="screen-morning-brief">
+        <div class="page-header">
+          <div class="flex justify-between items-center">
+            <div>
+              <h1 class="page-title">🌅 Morning Brief</h1>
+              <p class="page-desc">Your daily 7am IST briefing — calendar, clients, leads, focus</p>
+            </div>
+            <button class="btn btn-primary" onclick="generateMorningBrief()">
+              <i data-lucide="refresh-cw" style="width:14px;height:14px"></i>
+              Generate New Brief
+            </button>
+          </div>
+        </div>
+        <div class="card">
+          <div id="morning-brief-content">
+            <div class="empty-state">
+              <div class="spinner"></div>
+              <div class="empty-title">Loading today's brief…</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ CHAT ═══════════ -->
+      <section class="screen hidden" id="screen-chat" style="height:calc(100vh - 56px - 48px); margin:-24px; padding:0">
+        <div class="chat-container">
+          <div class="chat-toolbar">
+            <div class="chat-selector" onclick="toggleClientSelector()" id="chat-client-selector">
+              <i data-lucide="user" style="width:14px;height:14px"></i>
+              <span id="chat-client-label">Manthan (general)</span>
+            </div>
+            <div class="chat-selector" onclick="toggleAgentSelector()" id="chat-agent-selector">
+              <i data-lucide="bot" style="width:14px;height:14px"></i>
+              <span id="chat-agent-label">Auto (orchestrator)</span>
+            </div>
+            <div class="devil-toggle" id="devil-toggle" onclick="toggleDevilsAdvocate()">
+              <i data-lucide="flame" style="width:14px;height:14px"></i>
+              <span>Devil's Advocate</span>
+            </div>
+            <div style="margin-left:auto; display:flex; gap:8px;">
+              <button class="btn btn-ghost btn-sm" onclick="newChat()" title="New chat">
+                <i data-lucide="plus" style="width:14px;height:14px"></i>
+                New
+              </button>
+              <button class="btn btn-ghost btn-sm" onclick="exportChat()" title="Export">
+                <i data-lucide="download" style="width:14px;height:14px"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="chat-messages" id="chat-messages">
+            <div class="empty-state">
+              <div class="empty-icon">💬</div>
+              <div class="empty-title">Start a conversation</div>
+              <div class="empty-desc">Ask anything — research a brand, qualify leads, generate content, plan strategy. The orchestrator will route to the right agent.</div>
+            </div>
+          </div>
+
+          <div class="chat-quick-commands" id="chat-quick-commands">
+            <button class="quick-cmd" onclick="quickPrompt('Generate my morning brief')">🌅 Morning Brief</button>
+            <button class="quick-cmd" onclick="quickPrompt('Research competitors for my active clients')">🔍 Research Competitors</button>
+            <button class="quick-cmd" onclick="quickPrompt('Qualify next 10 leads from the pipeline')">🎯 Qualify Leads</button>
+            <button class="quick-cmd" onclick="quickPrompt('Plan content calendar for next 30 days')">📅 Plan Content</button>
+            <button class="quick-cmd" onclick="quickPrompt('Show me the current financial snapshot')">💰 Check Finances</button>
+            <button class="quick-cmd" onclick="quickPrompt('Run QA on pending deliverables')">✅ Run QA</button>
+            <button class="quick-cmd" onclick="quickPrompt('Write outreach to Tier A leads')">📧 Write Outreach</button>
+            <button class="quick-cmd" onclick="quickPrompt('Audit the system for issues')">🔍 System Audit</button>
+          </div>
+
+          <div class="chat-input-area">
+            <div class="chat-input-row">
+              <textarea class="chat-textarea" id="chat-input" placeholder="Ask anything... (Cmd+Enter to send)" rows="1"></textarea>
+              <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()">
+                <i data-lucide="send" style="width:16px;height:16px"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ CLIENTS ═══════════ -->
+      <section class="screen hidden" id="screen-clients">
+        <div class="page-header">
+          <div class="flex justify-between items-center">
+            <div>
+              <h1 class="page-title">Clients</h1>
+              <p class="page-desc">Your active client portfolio</p>
+            </div>
+            <button class="btn btn-primary" onclick="openOnboardingWizard()">
+              <i data-lucide="plus" style="width:14px;height:14px"></i>
+              Add Client
+            </button>
+          </div>
+        </div>
+        <div id="clients-grid" class="grid grid-3"></div>
+      </section>
+
+      <!-- ═══════════ BRANDS (Mind Map) ═══════════ -->
+      <section class="screen hidden" id="screen-brands">
+        <div class="page-header">
+          <h1 class="page-title">Brand Mind Maps</h1>
+          <p class="page-desc">Visual brand intelligence — identity, audience, competitors, channels</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="tabs" id="brand-tabs"></div>
+            <button class="btn btn-ghost btn-sm" id="brand-edit-btn" onclick="editMindMap()" style="display:none">
+              <i data-lucide="edit-2" style="width:14px;height:14px"></i> Edit
+            </button>
+          </div>
+          <div class="graph-container" id="brand-mindmap" style="height:600px"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════ APPROVALS ═══════════ -->
+      <section class="screen hidden" id="screen-approvals">
+        <div class="page-header">
+          <h1 class="page-title">Approvals Queue</h1>
+          <p class="page-desc">Review and approve content before it goes to clients</p>
+        </div>
+        <div class="card">
+          <div id="approvals-list"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════ DELIVERABLES ═══════════ -->
+      <section class="screen hidden" id="screen-deliverables">
+        <div class="page-header">
+          <div class="flex justify-between items-center">
+            <div>
+              <h1 class="page-title">Deliverables</h1>
+              <p class="page-desc">Lifecycle: brief → draft → QA → review → approved → published</p>
+            </div>
+            <div class="tabs">
+              <div class="tab active" data-deliv-filter="all">All</div>
+              <div class="tab" data-deliv-filter="brief">Brief</div>
+              <div class="tab" data-deliv-filter="draft">Draft</div>
+              <div class="tab" data-deliv-filter="client_review">Review</div>
+              <div class="tab" data-deliv-filter="approved">Approved</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div id="deliverables-list"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════ CONTENT CALENDAR ═══════════ -->
+      <section class="screen hidden" id="screen-content-calendar">
+        <div class="page-header">
+          <h1 class="page-title">Content Calendar</h1>
+          <p class="page-desc">Scheduled content across all clients and platforms</p>
+        </div>
+        <div class="card">
+          <div id="calendar-list"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════ REPORTS ═══════════ -->
+      <section class="screen hidden" id="screen-reports">
+        <div class="page-header">
+          <h1 class="page-title">Reports</h1>
+          <p class="page-desc">Performance analytics across clients</p>
+        </div>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Engagement Trends</div></div>
+            <canvas id="reports-engagement-chart" height="200"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Content Volume</div></div>
+            <canvas id="reports-volume-chart" height="200"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ LEAD PIPELINE ═══════════ -->
+      <section class="screen hidden" id="screen-lead-pipeline">
+        <div class="page-header">
+          <div class="flex justify-between items-center">
+            <div>
+              <h1 class="page-title">Lead Pipeline</h1>
+              <p class="page-desc">18,000+ leads — qualified by AI, ranked by fit</p>
+            </div>
+            <button class="btn btn-primary" onclick="qualifyBatch()">
+              <i data-lucide="zap" style="width:14px;height:14px"></i>
+              Qualify Next 10
+            </button>
+          </div>
+        </div>
+        <div class="kpi-grid" id="leads-kpis"></div>
+        <div class="card">
+          <div class="table-wrap">
+            <table id="leads-table">
+              <thead>
+                <tr>
+                  <th>Business</th>
+                  <th>Category</th>
+                  <th>Score</th>
+                  <th>Status</th>
+                  <th>Pain Point</th>
+                  <th>Last Contact</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="leads-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ PROJECTS ═══════════ -->
+      <section class="screen hidden" id="screen-projects">
+        <div class="page-header">
+          <h1 class="page-title">Projects</h1>
+          <p class="page-desc">Active client projects from Airtable</p>
+        </div>
+        <div class="card">
+          <div id="projects-list"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════ WORKFLOWS (n8n) ═══════════ -->
+      <section class="screen hidden" id="screen-workflows">
+        <div class="page-header">
+          <div class="flex justify-between items-center">
+            <div>
+              <h1 class="page-title">n8n Workflows</h1>
+              <p class="page-desc">Automation engine — view, trigger, monitor</p>
+            </div>
+            <div class="flex gap-2 items-center">
+              <span class="text-small text-muted">Status:</span>
+              <span class="badge badge-emerald" id="n8n-health-badge">Checking...</span>
+            </div>
+          </div>
+        </div>
+        <div id="workflows-list" class="grid grid-2"></div>
+      </section>
+
+      <!-- ═══════════ WORKBENCH ═══════════ -->
+      <section class="screen hidden" id="screen-workbench">
+        <div class="page-header">
+          <h1 class="page-title">Workbench</h1>
+          <p class="page-desc">Specialized AI tools for content, research, and outreach</p>
+        </div>
+        <div class="grid grid-3" id="workbench-tools"></div>
+      </section>
+
+      <!-- ═══════════ AGENTS CONSOLE ═══════════ -->
+      <section class="screen hidden" id="screen-agents-console">
+        <div class="page-header">
+          <h1 class="page-title">Agents Console</h1>
+          <p class="page-desc">23 specialized agents — performance, runs, status</p>
+        </div>
+        <div class="grid grid-3" id="agents-grid"></div>
+      </section>
+
+      <!-- ═══════════ FINANCE ═══════════ -->
+      <section class="screen hidden" id="screen-finance">
+        <div class="page-header">
+          <div class="flex justify-between items-center">
+            <div>
+              <h1 class="page-title">Finance</h1>
+              <p class="page-desc">MRR, invoices, financial health</p>
+            </div>
+            <button class="btn btn-gold" onclick="openInvoiceModal()">
+              <i data-lucide="file-plus" style="width:14px;height:14px"></i>
+              New Invoice
+            </button>
+          </div>
+        </div>
+        <div class="kpi-grid" id="finance-kpis"></div>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title">MRR Trend</div></div>
+            <canvas id="finance-mrr-chart" height="200"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Outstanding Invoices</div></div>
+            <div id="invoices-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ KNOWLEDGE BASE ═══════════ -->
+      <section class="screen hidden" id="screen-knowledge-base">
+        <div class="page-header">
+          <h1 class="page-title">Knowledge Base</h1>
+          <p class="page-desc">Decisions, lessons, market intel — institutional memory</p>
+        </div>
+        <div class="card">
+          <div id="kb-entries"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════ SOPs ═══════════ -->
+      <section class="screen hidden" id="screen-sops">
+        <div class="page-header">
+          <h1 class="page-title">Standard Operating Procedures</h1>
+          <p class="page-desc">Repeatable processes for consistent execution</p>
+        </div>
+        <div class="card">
+          <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <div class="empty-title">No SOPs yet</div>
+            <div class="empty-desc">Use the SOP Generator agent in Workbench to create your first SOP.</div>
+            <button class="btn btn-primary mt-4" onclick="navigate('workbench')">Go to Workbench</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ CONNECTOR MAP ═══════════ -->
+      <section class="screen hidden" id="screen-connector-map">
+        <div class="page-header">
+          <h1 class="page-title">Connector Map</h1>
+          <p class="page-desc">Live system map — agents, data, automations, APIs</p>
+        </div>
+        <div class="card" style="padding:0; height:600px; position:relative">
+          <div class="graph-container" id="connector-map" style="height:600px"></div>
+          <div class="graph-controls">
+            <button class="btn btn-ghost btn-icon" onclick="resetConnectorMap()" title="Reset"><i data-lucide="refresh-cw" style="width:14px;height:14px"></i></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ SETTINGS ═══════════ -->
+      <section class="screen hidden" id="screen-settings">
+        <div class="page-header">
+          <h1 class="page-title">Settings</h1>
+          <p class="page-desc">System configuration</p>
+        </div>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Theme</div></div>
+            <div class="flex justify-between items-center">
+              <span class="text-body">Dark mode</span>
+              <div class="toggle on" id="theme-toggle" onclick="toggleTheme()"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Connectors</div></div>
+            <div id="settings-connectors"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Keyboard Shortcuts</div></div>
+            <div class="text-small text-muted" style="line-height:2">
+              <div>⌘K — Global search</div>
+              <div>⌘B — Morning brief</div>
+              <div>⌘F — Finance</div>
+              <div>⌘/ — Open chat</div>
+              <div>Esc — Close modal</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- ═════════════════ NOTIFICATIONS PANEL ═════════════════ -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-panel-header">
+    <div class="text-h3">Notifications</div>
+    <button class="btn btn-ghost btn-sm" onclick="markAllRead()">Mark all read</button>
+  </div>
+  <div id="notif-list" style="max-height:480px; overflow-y:auto"></div>
+</div>
+
+<!-- ═════════════════ GLOBAL SEARCH ═════════════════ -->
+<div class="search-overlay" id="search-overlay" onclick="if(event.target===this) closeSearch()">
+  <div class="search-box">
+    <div class="search-input-row">
+      <i data-lucide="search" style="width:18px;height:18px;color:var(--text-3)"></i>
+      <input type="text" class="search-main-input" id="search-input" placeholder="Search clients, deliverables, leads, agents..." />
+      <kbd class="text-small text-dim" style="padding:3px 6px; background:var(--surface-3); border-radius:4px">esc</kbd>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<!-- ═════════════════ ONBOARDING WIZARD ═════════════════ -->
+<div class="modal-overlay" id="onboarding-modal" onclick="if(event.target===this) closeOnboarding()">
+  <div class="modal modal-lg onboarding-wizard">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Add New Client</div>
+        <div class="text-small text-muted mt-2">Onboard a new client to Manthan OS</div>
+      </div>
+      <button class="btn-icon btn btn-ghost" onclick="closeOnboarding()">
+        <i data-lucide="x" style="width:16px;height:16px"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="grid grid-2">
+        <div class="form-group">
+          <label class="form-label">Client Name *</label>
+          <input class="form-input" id="ob-name" placeholder="e.g., Mocha Coffee Co." />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Brand Name</label>
+          <input class="form-input" id="ob-brand" placeholder="If different from client name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Industry *</label>
+          <input class="form-input" id="ob-industry" placeholder="e.g., F&B, Fashion, Wellness" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Monthly Retainer (₹)</label>
+          <input class="form-input" id="ob-retainer" type="number" placeholder="50000" />
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Brand Voice (Tone)</label>
+          <input class="form-input" id="ob-tone" placeholder="e.g., warm, premium, conversational" />
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Active Channels</label>
+          <input class="form-input" id="ob-channels" placeholder="Instagram, LinkedIn, WhatsApp" />
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">WhatsApp Number</label>
+          <input class="form-input" id="ob-whatsapp" placeholder="91XXXXXXXXXX" />
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Brand Color (gradient)</label>
+          <div class="gradient-picker" id="gradient-picker"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOnboarding()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitOnboarding()" id="onboarding-submit">
+        <i data-lucide="rocket" style="width:14px;height:14px"></i>
+        Onboard Client
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════ CLIENT/AGENT SELECTOR MODAL ═════════════════ -->
+<div class="modal-overlay" id="selector-modal" onclick="if(event.target===this) closeSelector()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="selector-title">Select</div>
+      <button class="btn-icon btn btn-ghost" onclick="closeSelector()"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+    </div>
+    <div class="modal-body" id="selector-body"></div>
+  </div>
+</div>
+
+<!-- ═════════════════ INVOICE MODAL ═════════════════ -->
+<div class="modal-overlay" id="invoice-modal" onclick="if(event.target===this) closeInvoiceModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Create Invoice</div>
+      <button class="btn-icon btn btn-ghost" onclick="closeInvoiceModal()"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Client</label>
+        <select class="form-input" id="invoice-client"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Amount (₹)</label>
+        <input class="form-input" id="invoice-amount" type="number" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Due Date</label>
+        <input class="form-input" id="invoice-due" type="date" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-input" id="invoice-notes" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeInvoiceModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="createInvoice()">Create Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════ TOAST CONTAINER ═════════════════ -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ═════════════════ JAVASCRIPT ═════════════════ -->
+<script>
+// ─── STATE ────────────────────────────────────────────
+const State = {
+  currentScreen: 'dashboard',
+  clients: [],
+  selectedClientId: null,
+  agents: [],
+  notifications: [],
+  unreadCount: 0,
+  chatSessionId: null,
+  chatAgentName: 'orchestrator',
+  chatClientId: null,
+  devilsAdvocate: false,
+  isStreaming: false,
+  selectedGradient: 0,
+  brandTab: null,
+  delivFilter: 'all',
+};
+
+const GRADIENTS = [
+  'linear-gradient(135deg, #4ade80, #22c55e)',
+  'linear-gradient(135deg, #4F6EF7, #7C3AED)',
+  'linear-gradient(135deg, #f472b6, #e879f9)',
+  'linear-gradient(135deg, #a16207, #d97706)',
+  'linear-gradient(135deg, #06b6d4, #0284c7)',
+  'linear-gradient(135deg, #f97316, #ef4444)',
+  'linear-gradient(135deg, #a855f7, #6366f1)',
+  'linear-gradient(135deg, #10b981, #0d9488)',
+];
+
+// ─── API CLIENT ───────────────────────────────────────
+const API = {
+  base: '',
+  async get(path) {
+    const r = await fetch(this.base + path);
+    if (!r.ok) throw new Error('API error: ' + r.status);
+    return await r.json();
+  },
+  async post(path, body) {
+    const r = await fetch(this.base + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {})
+    });
+    return await r.json();
+  },
+  async put(path, body) {
+    const r = await fetch(this.base + path, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {})
+    });
+    return await r.json();
+  },
+  async del(path) {
+    const r = await fetch(this.base + path, { method: 'DELETE' });
+    return await r.json();
+  },
+};
+
+// ─── NAVIGATION ───────────────────────────────────────
+function navigate(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  const target = document.getElementById('screen-' + screen);
+  if (target) target.classList.remove('hidden');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll(`[data-screen="${screen}"]`).forEach(n => n.classList.add('active'));
+  State.currentScreen = screen;
+  document.getElementById('topbar-title').textContent = formatScreenName(screen);
+  loadScreen(screen);
+}
+
+function formatScreenName(s) {
+  return s.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+}
+
+document.querySelectorAll('[data-screen]').forEach(el => {
+  el.addEventListener('click', () => navigate(el.dataset.screen));
+});
+
+// ─── SCREEN LOADERS ───────────────────────────────────
+async function loadScreen(screen) {
+  try {
+    if (screen === 'dashboard') return await loadDashboard();
+    if (screen === 'morning-brief') return await loadMorningBrief();
+    if (screen === 'clients') return await loadClients();
+    if (screen === 'brands') return await loadBrands();
+    if (screen === 'approvals') return await loadApprovals();
+    if (screen === 'deliverables') return await loadDeliverables();
+    if (screen === 'content-calendar') return await loadContentCalendar();
+    if (screen === 'reports') return await loadReports();
+    if (screen === 'lead-pipeline') return await loadLeads();
+    if (screen === 'projects') return await loadProjects();
+    if (screen === 'workflows') return await loadWorkflows();
+    if (screen === 'workbench') return loadWorkbench();
+    if (screen === 'agents-console') return await loadAgentsConsole();
+    if (screen === 'finance') return await loadFinance();
+    if (screen === 'knowledge-base') return await loadKnowledgeBase();
+    if (screen === 'connector-map') return await loadConnectorMap();
+    if (screen === 'settings') return await loadSettings();
+  } catch(e) { console.error('loadScreen error:', e); toast('error', 'Load failed: ' + e.message); }
+}
+
+// ─── DASHBOARD ────────────────────────────────────────
+async function loadDashboard() {
+  const greeting = new Date().getHours() < 12 ? 'Good morning' :
+                   new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('dashboard-greeting').textContent =
+    `${greeting} — here's your agency at a glance`;
+
+  // KPIs
+  const [{ clients }, { stats }, { totalMrr, breakdown }, healthData] = await Promise.all([
+    API.get('/api/clients').catch(() => ({ clients: [] })),
+    API.get('/api/leads/stats').catch(() => ({ stats: { total: 0, tierA: 0 } })),
+    API.get('/api/financials/mrr').catch(() => ({ totalMrr: 0, breakdown: [] })),
+    API.get('/api/system/health').catch(() => ({ agentSuccessRate: 100 }))
+  ]);
+  State.clients = clients;
+
+  const kpiHtml = `
+    <div class="kpi-card gold">
+      <div class="kpi-label">Monthly Recurring Revenue</div>
+      <div class="kpi-value">₹${(totalMrr/1000).toFixed(0)}K</div>
+      <div class="kpi-change up"><i data-lucide="trending-up" style="width:12px;height:12px"></i> ${clients.length} active</div>
+    </div>
+    <div class="kpi-card accent">
+      <div class="kpi-label">Active Clients</div>
+      <div class="kpi-value">${clients.length}</div>
+      <div class="kpi-change up">Capacity: 15-20 with OS</div>
+    </div>
+    <div class="kpi-card emerald">
+      <div class="kpi-label">Lead Pipeline</div>
+      <div class="kpi-value">${stats.total || 0}</div>
+      <div class="kpi-change up">${stats.tierA || 0} Tier A</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Agent Success Rate</div>
+      <div class="kpi-value">${healthData.agentSuccessRate || 100}%</div>
+      <div class="kpi-change up">Last 24h</div>
+    </div>
+  `;
+  document.getElementById('dashboard-kpis').innerHTML = kpiHtml;
+
+  // Clients section
+  if (clients.length === 0) {
+    document.getElementById('dashboard-clients').innerHTML = emptyState(
+      '👋', 'Welcome to Manthan OS',
+      'Start by adding your first client. The system will set up everything automatically.',
+      'Add First Client', 'openOnboardingWizard()'
+    );
+  } else {
+    document.getElementById('dashboard-clients').innerHTML = clients.slice(0, 5).map(c => {
+      const grad = c.brand_gradient || GRADIENTS[0];
+      const score = c.health_score || 0;
+      return `
+        <div class="flex items-center gap-3 p-4 rounded" style="border-bottom:1px solid var(--border)">
+          <div class="client-avatar shrink-0" style="background:${grad}">${c.name?.[0]?.toUpperCase() || '?'}</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-body" style="font-weight:500">${c.name}</div>
+            <div class="text-small text-muted">${c.industry || 'No industry set'}</div>
+          </div>
+          <div style="width:80px">
+            <div class="progress-bar"><div class="progress-fill ${score>=80?'emerald':score>=50?'gold':''}" style="width:${score}%"></div></div>
+            <div class="text-small text-dim mt-2">${score}/100</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Activity
+  const { notifications } = await API.get('/api/notifications').catch(() => ({ notifications: [] }));
+  document.getElementById('dashboard-activity').innerHTML = (notifications.slice(0, 8).map(n => `
+    <div class="flex items-center gap-3 p-4" style="border-bottom:1px solid var(--border)">
+      <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0"></div>
+      <div class="flex-1 min-w-0">
+        <div class="text-body truncate">${n.title}</div>
+        <div class="text-small text-dim">${formatTime(n.created_at)}</div>
+      </div>
+    </div>
+  `).join('') || emptyState('📭', 'No recent activity', 'Activity will appear here as the system runs.'));
+
+  // System health
+  const { connectors } = await API.get('/api/system/connectors').catch(() => ({ connectors: [] }));
+  document.getElementById('dashboard-system').innerHTML = connectors.map(c => `
+    <div class="card" style="padding:16px">
+      <div class="flex items-center gap-3">
+        <span class="status-dot ${c.status === 'live' || c.status === 'configured' ? 'live' : 'offline'}"></span>
+        <div>
+          <div class="text-body" style="font-weight:500">${c.name}</div>
+          <div class="text-small text-dim">${c.status}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  refreshIcons();
+}
+
+// ─── MORNING BRIEF ────────────────────────────────────
+async function loadMorningBrief() {
+  document.getElementById('morning-brief-content').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon">🌅</div>
+      <div class="empty-title">No brief generated today yet</div>
+      <div class="empty-desc">Click "Generate New Brief" to create today's morning briefing.</div>
+    </div>
+  `;
+}
+
+async function generateMorningBrief() {
+  const target = document.getElementById('morning-brief-content');
+  target.innerHTML = '<div class="empty-state"><div class="spinner"></div><div class="empty-title">Generating brief…</div></div>';
+  try {
+    const result = await API.post('/api/agent/morning-brief', {
+      messages: [{ role: 'user', content: 'Generate today\'s morning brief.' }]
+    });
+    target.innerHTML = `<div style="white-space:pre-wrap; line-height:1.8; padding:8px">${escapeHtml(result.output || 'No output')}</div>`;
+    toast('success', 'Morning brief generated');
+  } catch(e) {
+    target.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Failed</div><div class="empty-desc">${e.message}</div></div>`;
+  }
+}
+
+// ─── CLIENTS ──────────────────────────────────────────
+async function loadClients() {
+  const { clients } = await API.get('/api/clients');
+  State.clients = clients;
+  const grid = document.getElementById('clients-grid');
+  if (clients.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1">${emptyState('👋', 'No clients yet',
+      'Add your first client to begin. The onboarding agent will set up brand profile, mind map, and Notion page automatically.',
+      'Add First Client', 'openOnboardingWizard()')}</div>`;
+    return;
+  }
+  grid.innerHTML = clients.map(c => {
+    const grad = c.brand_gradient || GRADIENTS[0];
+    const score = c.health_score || 0;
+    const rate = JSON.parse(c.rate_card || '{}')?.monthly_retainer || 0;
+    return `
+      <div class="client-card" onclick="openClientDetail('${c.id}')">
+        <div class="client-card-accent" style="background:${grad}"></div>
+        <div class="client-card-body">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="client-avatar" style="background:${grad}">${c.name?.[0]?.toUpperCase() || '?'}</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-h3 truncate">${c.name}</div>
+              <div class="text-small text-muted">${c.industry || '—'}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="badge badge-emerald">Active</span>
+            ${rate ? `<span class="badge badge-gold">₹${(rate/1000).toFixed(0)}K/mo</span>` : ''}
+          </div>
+          <div class="text-label" style="margin-bottom:6px">Health Score</div>
+          <div class="progress-bar"><div class="progress-fill ${score>=80?'emerald':score>=50?'gold':''}" style="width:${score}%"></div></div>
+          <div class="flex justify-between mt-2">
+            <span class="text-small text-dim">${score}/100</span>
+            <span class="text-small text-dim">${c.channels || ''}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  refreshIcons();
+}
+
+async function openClientDetail(id) {
+  const client = State.clients.find(c => c.id === id);
+  if (!client) return;
+  toast('info', `Opening ${client.name}...`);
+  State.brandTab = id;
+  navigate('brands');
+}
+
+// ─── BRANDS (D3 Mind Map) ─────────────────────────────
+async function loadBrands() {
+  const tabs = document.getElementById('brand-tabs');
+  if (State.clients.length === 0) {
+    document.getElementById('brand-mindmap').innerHTML = emptyState('🧠', 'No brands yet',
+      'Add a client to see their brand mind map.', 'Add Client', 'openOnboardingWizard()');
+    tabs.innerHTML = '';
+    return;
+  }
+  tabs.innerHTML = State.clients.map(c =>
+    `<div class="tab ${(State.brandTab || State.clients[0].id) === c.id ? 'active' : ''}" onclick="switchBrand('${c.id}')">${c.name}</div>`
+  ).join('');
+  document.getElementById('brand-edit-btn').style.display = '';
+  if (!State.brandTab) State.brandTab = State.clients[0].id;
+  renderBrandMindMap(State.brandTab);
+}
+
+function switchBrand(id) {
+  State.brandTab = id;
+  document.querySelectorAll('#brand-tabs .tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  renderBrandMindMap(id);
+}
+
+function renderBrandMindMap(clientId) {
+  const client = State.clients.find(c => c.id === clientId);
+  if (!client) return;
+  let mindData;
+  try { mindData = JSON.parse(client.mind_map_data || '{}'); } catch(e) { mindData = {}; }
+  if (!mindData.nodes) {
+    mindData = {
+      nodes: [
+        { id: 'brand', label: client.name, type: 'root' },
+        { id: 'audience', label: 'Audience', type: 'cluster' },
+        { id: 'competitors', label: 'Competitors', type: 'cluster' },
+        { id: 'pillars', label: 'Pillars', type: 'cluster' },
+        { id: 'channels', label: 'Channels', type: 'cluster' },
+        { id: 'goals', label: 'Goals', type: 'cluster' }
+      ],
+      links: [
+        { source: 'brand', target: 'audience' },
+        { source: 'brand', target: 'competitors' },
+        { source: 'brand', target: 'pillars' },
+        { source: 'brand', target: 'channels' },
+        { source: 'brand', target: 'goals' }
+      ]
+    };
+  }
+  drawForceGraph('brand-mindmap', mindData, client.brand_gradient);
+}
+
+// ─── D3 FORCE GRAPH ───────────────────────────────────
+function drawForceGraph(containerId, data, brandGradient) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+
+  const svg = d3.select('#' + containerId).append('svg').attr('width', w).attr('height', h);
+
+  // Add gradient defs for nodes
+  const defs = svg.append('defs');
+  const grad = defs.append('linearGradient').attr('id', 'node-grad').attr('x1', '0%').attr('y1', '0%').attr('x2', '100%').attr('y2', '100%');
+  grad.append('stop').attr('offset', '0%').attr('stop-color', '#4F6EF7');
+  grad.append('stop').attr('offset', '100%').attr('stop-color', '#7C3AED');
+
+  const sim = d3.forceSimulation(data.nodes)
+    .force('link', d3.forceLink(data.links).id(d => d.id).distance(120))
+    .force('charge', d3.forceManyBody().strength(-300))
+    .force('center', d3.forceCenter(w/2, h/2))
+    .force('collide', d3.forceCollide(40));
+
+  const link = svg.append('g').selectAll('line')
+    .data(data.links).enter().append('line').attr('class', 'link');
+
+  const node = svg.append('g').selectAll('g')
+    .data(data.nodes).enter().append('g').attr('class', 'node')
+    .call(d3.drag()
+      .on('start', (e,d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', (e,d) => { d.fx = e.x; d.fy = e.y; })
+      .on('end', (e,d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+
+  node.append('circle')
+    .attr('r', d => d.type === 'root' ? 30 : 20)
+    .attr('fill', d => d.type === 'root' ? 'url(#node-grad)' : '#0d0d18')
+    .attr('stroke', d => d.type === 'root' ? '#4F6EF7' : '#252540');
+
+  node.append('text')
+    .attr('class', 'node-label')
+    .attr('dy', d => d.type === 'root' ? 4 : 35)
+    .attr('fill', d => d.type === 'root' ? '#fff' : '#8888A8')
+    .style('font-weight', d => d.type === 'root' ? '600' : '500')
+    .text(d => d.label);
+
+  sim.on('tick', () => {
+    link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+    node.attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+}
+
+function editMindMap() { toast('info', 'Mind map editor: click and drag nodes to reposition. Save coming in next update.'); }
+
+// ─── CONNECTOR MAP ────────────────────────────────────
+async function loadConnectorMap() {
+  const { connectors } = await API.get('/api/system/connectors');
+  const data = {
+    nodes: [
+      { id: 'manthan', label: 'Manthan OS', type: 'root' },
+      ...connectors.map(c => ({ id: c.id, label: c.name, type: 'connector', status: c.status }))
+    ],
+    links: connectors.map(c => ({ source: 'manthan', target: c.id }))
+  };
+  drawConnectorGraph('connector-map', data);
+}
+
+function drawConnectorGraph(containerId, data) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+
+  const svg = d3.select('#' + containerId).append('svg').attr('width', w).attr('height', h);
+
+  const defs = svg.append('defs');
+  const grad = defs.append('linearGradient').attr('id', 'cmap-grad').attr('x1', '0%').attr('y1', '0%').attr('x2', '100%').attr('y2', '100%');
+  grad.append('stop').attr('offset', '0%').attr('stop-color', '#F4B942');
+  grad.append('stop').attr('offset', '100%').attr('stop-color', '#F97316');
+
+  const sim = d3.forceSimulation(data.nodes)
+    .force('link', d3.forceLink(data.links).id(d => d.id).distance(150))
+    .force('charge', d3.forceManyBody().strength(-500))
+    .force('center', d3.forceCenter(w/2, h/2))
+    .force('collide', d3.forceCollide(50));
+
+  const link = svg.append('g').selectAll('line')
+    .data(data.links).enter().append('line').attr('class', 'link');
+
+  const node = svg.append('g').selectAll('g')
+    .data(data.nodes).enter().append('g').attr('class', 'node')
+    .call(d3.drag()
+      .on('start', (e,d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', (e,d) => { d.fx = e.x; d.fy = e.y; })
+      .on('end', (e,d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+
+  node.append('circle')
+    .attr('r', d => d.type === 'root' ? 36 : 22)
+    .attr('fill', d => d.type === 'root' ? 'url(#cmap-grad)' :
+                       d.status === 'live' || d.status === 'configured' ? '#0d0d18' : '#171730')
+    .attr('stroke', d => d.type === 'root' ? '#F4B942' :
+                          d.status === 'live' ? '#34C759' :
+                          d.status === 'configured' ? '#4F6EF7' : '#FF375F')
+    .attr('stroke-width', 2);
+
+  node.append('text')
+    .attr('class', 'node-label')
+    .attr('dy', d => d.type === 'root' ? 4 : 38)
+    .attr('fill', d => d.type === 'root' ? '#000' : '#F0F0FA')
+    .style('font-weight', d => d.type === 'root' ? '700' : '500')
+    .text(d => d.label);
+
+  // Status dot
+  node.filter(d => d.type !== 'root').append('circle')
+    .attr('r', 4).attr('cx', 18).attr('cy', -18)
+    .attr('fill', d => d.status === 'live' ? '#34C759' : d.status === 'configured' ? '#4F6EF7' : '#FF375F');
+
+  sim.on('tick', () => {
+    link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+    node.attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+}
+
+function resetConnectorMap() { loadConnectorMap(); }
+
+// ─── APPROVALS ────────────────────────────────────────
+async function loadApprovals() {
+  const { approvals } = await API.get('/api/approvals');
+  const list = document.getElementById('approvals-list');
+  if (approvals.length === 0) {
+    list.innerHTML = emptyState('✅', 'No pending approvals', 'All caught up! Approvals will appear here when content is ready for review.');
+    return;
+  }
+  list.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>Title</th><th>Client</th><th>Type</th><th>Platform</th><th>Status</th><th></th></tr></thead>
+    <tbody>${approvals.map(a => `
+      <tr>
+        <td>${a.title || 'Untitled'}</td>
+        <td>${a.client_name || '—'}</td>
+        <td>${a.content_type || '—'}</td>
+        <td>${a.platform || '—'}</td>
+        <td><span class="badge badge-amber">${a.approval_status || a.status || 'pending'}</span></td>
+        <td>
+          <button class="btn btn-primary btn-sm" onclick="updateApproval('${a.id || a.airtable_record_id}', 'approved')">Approve</button>
+          <button class="btn btn-danger btn-sm" onclick="updateApproval('${a.id || a.airtable_record_id}', 'rejected')">Reject</button>
+        </td>
+      </tr>
+    `).join('')}</tbody>
+  </table></div>`;
+}
+
+async function updateApproval(id, status) {
+  await API.post(`/api/approvals/${id}/status`, { status });
+  toast('success', `Approval ${status}`);
+  loadApprovals();
+  refreshNotificationBadges();
+}
+
+// ─── DELIVERABLES ─────────────────────────────────────
+async function loadDeliverables() {
+  document.querySelectorAll('[data-deliv-filter]').forEach(t => {
+    t.addEventListener('click', e => {
+      State.delivFilter = e.target.dataset.delivFilter;
+      document.querySelectorAll('[data-deliv-filter]').forEach(x => x.classList.remove('active'));
+      e.target.classList.add('active');
+      loadDeliverables();
+    });
+  });
+  const status = State.delivFilter !== 'all' ? `?status=${State.delivFilter}` : '';
+  const { deliverables } = await API.get('/api/deliverables' + status);
+  const list = document.getElementById('deliverables-list');
+  if (deliverables.length === 0) {
+    list.innerHTML = emptyState('📦', 'No deliverables', 'Use the brief-to-deliverable agent in chat to convert briefs into scoped work.');
+    return;
+  }
+  list.innerHTML = deliverables.map(d => `
+    <div style="border-bottom:1px solid var(--border); padding:16px 0">
+      <div class="flex justify-between items-center mb-2">
+        <div>
+          <div class="text-h3">${d.title}</div>
+          <div class="text-small text-muted">${d.client_name} • ${d.platform || d.type || '—'}</div>
+        </div>
+        <span class="badge ${d.status==='approved'?'badge-emerald':d.status==='client_review'?'badge-amber':'badge-neutral'}">${d.status}</span>
+      </div>
+      ${renderLifecycle(d.status)}
+    </div>
+  `).join('');
+  refreshIcons();
+}
+
+function renderLifecycle(currentStatus) {
+  const stages = ['brief', 'draft', 'qa', 'client_review', 'approved', 'published'];
+  const idx = stages.indexOf(currentStatus);
+  return `<div class="lifecycle-track">${stages.map((s, i) => `
+    <div class="lifecycle-stage">
+      <div class="lifecycle-dot ${i < idx ? 'done' : i === idx ? 'active' : ''}">${i+1}</div>
+      <div class="lifecycle-label">${s.replace('_', ' ')}</div>
+    </div>
+    ${i < stages.length - 1 ? `<div class="lifecycle-connector ${i < idx ? 'done' : ''}"></div>` : ''}
+  `).join('')}</div>`;
+}
+
+// ─── CONTENT CALENDAR ─────────────────────────────────
+async function loadContentCalendar() {
+  const { items } = await API.get('/api/content-calendar').catch(() => ({ items: [] }));
+  const list = document.getElementById('calendar-list');
+  if (!items || items.length === 0) {
+    list.innerHTML = emptyState('📅', 'Empty calendar', 'Use the content strategy agent in chat to plan and schedule content.');
+    return;
+  }
+  list.innerHTML = items.map(item => {
+    const f = item.fields;
+    return `
+      <div style="border-bottom:1px solid var(--border); padding:16px 0">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="text-h3">${f.post_title || 'Untitled'}</div>
+            <div class="text-small text-muted mt-2">${f.client_name || '—'} • ${f.platform || '—'} • ${f.content_type || '—'}</div>
+          </div>
+          <div class="text-small text-dim">${f.scheduled_date || ''}</div>
+        </div>
+        ${f.caption ? `<div class="text-small text-muted mt-2" style="line-height:1.6">${f.caption.slice(0, 200)}${f.caption.length > 200 ? '...' : ''}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+// ─── REPORTS ──────────────────────────────────────────
+let reportsCharts = {};
+async function loadReports() {
+  const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const data1 = labels.map(() => Math.floor(Math.random() * 5000) + 2000);
+  const data2 = labels.map(() => Math.floor(Math.random() * 20) + 5);
+
+  if (reportsCharts.engagement) reportsCharts.engagement.destroy();
+  if (reportsCharts.volume) reportsCharts.volume.destroy();
+
+  Chart.defaults.color = '#8888A8';
+  Chart.defaults.borderColor = '#1a1a2e';
+
+  reportsCharts.engagement = new Chart(document.getElementById('reports-engagement-chart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Engagement',
+        data: data1,
+        borderColor: '#4F6EF7',
+        backgroundColor: 'rgba(79,110,247,0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#1a1a2e' } }, x: { grid: { display: false } } } }
+  });
+
+  reportsCharts.volume = new Chart(document.getElementById('reports-volume-chart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Posts',
+        data: data2,
+        backgroundColor: '#F4B942',
+        borderRadius: 4
+      }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#1a1a2e' } }, x: { grid: { display: false } } } }
+  });
+}
+
+// ─── LEAD PIPELINE ────────────────────────────────────
+async function loadLeads() {
+  const [{ leads }, { stats }] = await Promise.all([
+    API.get('/api/leads').catch(() => ({ leads: [] })),
+    API.get('/api/leads/stats').catch(() => ({ stats: {} }))
+  ]);
+
+  document.getElementById('leads-kpis').innerHTML = `
+    <div class="kpi-card emerald"><div class="kpi-label">Total</div><div class="kpi-value">${stats.total || 0}</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">Tier A</div><div class="kpi-value">${stats.tierA || 0}</div></div>
+    <div class="kpi-card accent"><div class="kpi-label">Contacted</div><div class="kpi-value">${stats.contacted || 0}</div></div>
+    <div class="kpi-card amber"><div class="kpi-label">In Pipeline</div><div class="kpi-value">${stats.pipeline || 0}</div></div>
+  `;
+
+  const tbody = document.getElementById('leads-tbody');
+  if (!leads || leads.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7">${emptyState('🎯', 'No leads loaded', 'Connect Airtable in settings.')}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = leads.map(r => {
+    const f = r.fields;
+    const score = f.ai_score || 0;
+    return `
+      <tr>
+        <td><strong>${f.business_name || '—'}</strong></td>
+        <td>${f.category || '—'}</td>
+        <td><span class="badge ${score>=8?'badge-emerald':score>=6?'badge-amber':'badge-neutral'}">${score || 'N/A'}</span></td>
+        <td>${f.status || 'New'}</td>
+        <td class="text-small">${(f.pain_point || '').slice(0, 60)}</td>
+        <td class="text-small text-dim">${f.last_contact ? formatTime(f.last_contact) : '—'}</td>
+        <td><button class="btn btn-ghost btn-sm">→</button></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function qualifyBatch() {
+  toast('info', 'Qualifying next 10 leads... (this may take 1-2 min)');
+  try {
+    await API.post('/api/leads/qualify-batch', { count: 10 });
+    toast('success', 'Qualification complete!');
+    loadLeads();
+  } catch(e) { toast('error', e.message); }
+}
+
+// ─── PROJECTS ─────────────────────────────────────────
+async function loadProjects() {
+  const list = document.getElementById('projects-list');
+  list.innerHTML = emptyState('📂', 'Projects view', 'Active projects from Airtable will be shown here.');
+}
+
+// ─── WORKFLOWS ────────────────────────────────────────
+async function loadWorkflows() {
+  try {
+    const [{ workflows }, health] = await Promise.all([
+      API.get('/api/n8n/workflows'),
+      API.get('/api/n8n/health').catch(() => ({ status: 'unreachable' }))
+    ]);
+    document.getElementById('n8n-health-badge').textContent = health.status || 'unknown';
+    document.getElementById('n8n-health-badge').className = `badge ${health.status === 'healthy' || health.workflowCount ? 'badge-emerald' : 'badge-rose'}`;
+    document.getElementById('workflows-list').innerHTML = workflows.map(w => `
+      <div class="card interactive" onclick="triggerWorkflow('${w.id}', '${w.name?.replace(/'/g, "\\'")}')">
+        <div class="flex justify-between items-center mb-4">
+          <div class="text-h3">${w.name}</div>
+          <span class="badge ${w.active ? 'badge-emerald' : 'badge-neutral'}">${w.active ? 'Active' : 'Inactive'}</span>
+        </div>
+        <div class="text-small text-muted">${w.id}</div>
+        <div class="flex gap-2 mt-4">
+          <button class="btn btn-primary btn-sm">Trigger</button>
+          <button class="btn btn-ghost btn-sm">Logs</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    document.getElementById('workflows-list').innerHTML = emptyState('⚡', 'Cannot reach n8n', 'Check N8N_API_KEY and N8N_BASE_URL in .env');
+  }
+}
+
+async function triggerWorkflow(id, name) {
+  if (!confirm(`Trigger "${name}"?`)) return;
+  try {
+    await API.post(`/api/n8n/workflow/${id}/trigger`, {});
+    toast('success', `Triggered: ${name}`);
+  } catch(e) { toast('error', e.message); }
+}
+
+// ─── WORKBENCH ────────────────────────────────────────
+function loadWorkbench() {
+  const tools = [
+    { id: 'web-search', icon: '🔍', name: 'Web Search', desc: 'Search the web in real time' },
+    { id: 'url-scraper', icon: '🌐', name: 'URL Scraper', desc: 'Extract content from any URL' },
+    { id: 'hook-writer', icon: '🪝', name: 'Hook Writer', desc: 'Scroll-stopping social hooks' },
+    { id: 'caption-writer', icon: '✏️', name: 'Caption Writer', desc: 'Platform-native captions' },
+    { id: 'email-writer', icon: '📧', name: 'Email Writer', desc: 'Cold + warm email copy' },
+    { id: 'brand-research', icon: '🎯', name: 'Brand Research', desc: 'Deep brand intelligence' },
+    { id: 'lead-qualifier', icon: '🏆', name: 'Lead Qualifier', desc: 'Score and qualify leads' },
+    { id: 'repurposing', icon: '♻️', name: 'Content Repurposer', desc: 'Multiply content across platforms' },
+    { id: 'sop-generator', icon: '📋', name: 'SOP Generator', desc: 'Standard operating procedures' },
+  ];
+  document.getElementById('workbench-tools').innerHTML = tools.map(t => `
+    <div class="card interactive" onclick="openWorkbenchTool('${t.id}', '${t.name}')">
+      <div style="font-size:2rem; margin-bottom:12px">${t.icon}</div>
+      <div class="text-h3">${t.name}</div>
+      <div class="text-small text-muted mt-2">${t.desc}</div>
+    </div>
+  `).join('');
+}
+
+function openWorkbenchTool(id, name) {
+  const prompt = window.prompt(`${name} — what do you want to do?`, '');
+  if (!prompt) return;
+  toast('info', `Running ${name}...`);
+  API.post(`/api/workbench/${id}`, { prompt, query: prompt, url: prompt }).then(r => {
+    const result = r.result?.output || JSON.stringify(r.result || r, null, 2);
+    alert(result.slice(0, 4000));
+  }).catch(e => toast('error', e.message));
+}
+
+// ─── AGENTS CONSOLE ───────────────────────────────────
+async function loadAgentsConsole() {
+  const agents = [
+    { name: 'orchestrator', icon: '🧠', desc: 'Master router' },
+    { name: 'morning-brief', icon: '🌅', desc: 'Daily briefing' },
+    { name: 'brand-intelligence', icon: '🎯', desc: 'Deep brand research' },
+    { name: 'lead-qualifier', icon: '🏆', desc: 'Lead scoring' },
+    { name: 'content-strategy', icon: '📝', desc: 'Strategy + calendar' },
+    { name: 'outreach', icon: '📧', desc: 'Personalized outreach' },
+    { name: 'delivery-qa', icon: '✅', desc: 'Quality assurance' },
+    { name: 'brand-voice-guard', icon: '🛡️', desc: 'Voice compliance' },
+    { name: 'market-intel', icon: '📊', desc: 'Market intelligence' },
+    { name: 'competitor-watch', icon: '👀', desc: 'Competitor tracking' },
+    { name: 'hook-writer', icon: '🪝', desc: 'Social hooks' },
+    { name: 'caption-writer', icon: '✏️', desc: 'Platform captions' },
+    { name: 'email-writer', icon: '✉️', desc: 'Email copy' },
+    { name: 'repurposing', icon: '♻️', desc: 'Content multiplication' },
+    { name: 'sop-generator', icon: '📋', desc: 'SOP creation' },
+    { name: 'finance-tracker', icon: '💰', desc: 'Financial tracking' },
+    { name: 'knowledge-capture', icon: '🧩', desc: 'Knowledge base' },
+    { name: 'client-onboarding', icon: '🚀', desc: 'New client setup' },
+    { name: 'upsell-detector', icon: '📈', desc: 'Revenue expansion' },
+    { name: 'brief-to-deliverable', icon: '🔄', desc: 'Brief converter' },
+    { name: 'crisis-monitor', icon: '🚨', desc: 'Brand protection' },
+    { name: 'system-auditor', icon: '🔍', desc: 'OS health audit' },
+  ];
+  document.getElementById('agents-grid').innerHTML = agents.map(a => `
+    <div class="agent-card" onclick="runAgentDirect('${a.name}')">
+      <div class="agent-icon">${a.icon}</div>
+      <div class="agent-meta">
+        <div class="agent-name">${a.name}</div>
+        <div class="agent-desc">${a.desc}</div>
+        <div class="agent-status flex items-center gap-2 mt-2"><span class="status-dot live"></span> Ready</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function runAgentDirect(name) {
+  State.chatAgentName = name;
+  document.getElementById('chat-agent-label').textContent = name;
+  navigate('chat');
+  setTimeout(() => document.getElementById('chat-input').focus(), 100);
+}
+
+// ─── FINANCE ──────────────────────────────────────────
+let financeChart;
+async function loadFinance() {
+  const [{ totalMrr, breakdown }, { invoices }] = await Promise.all([
+    API.get('/api/financials/mrr'),
+    API.get('/api/invoices').catch(() => ({ invoices: [] }))
+  ]);
+
+  document.getElementById('finance-kpis').innerHTML = `
+    <div class="kpi-card gold"><div class="kpi-label">Current MRR</div><div class="kpi-value">₹${(totalMrr/1000).toFixed(0)}K</div></div>
+    <div class="kpi-card accent"><div class="kpi-label">Active Clients</div><div class="kpi-value">${breakdown.length}</div></div>
+    <div class="kpi-card emerald"><div class="kpi-label">Invoices Sent</div><div class="kpi-value">${invoices.filter(i=>i.status==='sent'||i.status==='paid').length}</div></div>
+    <div class="kpi-card amber"><div class="kpi-label">Outstanding</div><div class="kpi-value">₹${(invoices.filter(i=>i.status==='sent').reduce((s,i)=>s+i.amount,0)/1000).toFixed(0)}K</div></div>
+  `;
+
+  if (financeChart) financeChart.destroy();
+  Chart.defaults.color = '#8888A8';
+  const last6 = ['6mo ago','5mo','4mo','3mo','2mo','Last','Now'];
+  financeChart = new Chart(document.getElementById('finance-mrr-chart'), {
+    type: 'line',
+    data: {
+      labels: last6,
+      datasets: [{
+        label: 'MRR (₹)',
+        data: [0, 0, totalMrr*0.4, totalMrr*0.6, totalMrr*0.8, totalMrr*0.9, totalMrr],
+        borderColor: '#F4B942',
+        backgroundColor: 'rgba(244,185,66,0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#1a1a2e' } }, x: { grid: { display: false } } } }
+  });
+
+  const invList = document.getElementById('invoices-list');
+  if (invoices.length === 0) {
+    invList.innerHTML = emptyState('📄', 'No invoices yet', 'Create your first invoice to start tracking.');
+  } else {
+    invList.innerHTML = invoices.slice(0, 5).map(i => `
+      <div class="flex justify-between items-center" style="padding:12px 0; border-bottom:1px solid var(--border)">
+        <div>
+          <div class="text-body" style="font-weight:500">${i.invoice_number}</div>
+          <div class="text-small text-muted">${i.client_name}</div>
+        </div>
+        <div class="text-right">
+          <div class="text-body" style="font-weight:600">₹${(i.amount/1000).toFixed(0)}K</div>
+          <span class="badge ${i.status==='paid'?'badge-emerald':i.status==='sent'?'badge-amber':'badge-neutral'}">${i.status}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function openInvoiceModal() {
+  const sel = document.getElementById('invoice-client');
+  sel.innerHTML = State.clients.map(c => `<option value="${c.id}|${c.name}">${c.name}</option>`).join('');
+  document.getElementById('invoice-modal').classList.add('open');
+}
+function closeInvoiceModal() { document.getElementById('invoice-modal').classList.remove('open'); }
+
+async function createInvoice() {
+  const [client_id, client_name] = document.getElementById('invoice-client').value.split('|');
+  const amount = parseFloat(document.getElementById('invoice-amount').value);
+  const due_date = document.getElementById('invoice-due').value;
+  const notes = document.getElementById('invoice-notes').value;
+  if (!client_id || !amount) return toast('error', 'Client and amount required');
+  await API.post('/api/invoices', { client_id, client_name, amount, due_date, notes, status: 'draft' });
+  closeInvoiceModal();
+  toast('success', 'Invoice created');
+  loadFinance();
+}
+
+// ─── KNOWLEDGE BASE ───────────────────────────────────
+async function loadKnowledgeBase() {
+  const { entries } = await API.get('/api/knowledge-base').catch(() => ({ entries: [] }));
+  const target = document.getElementById('kb-entries');
+  if (!entries || entries.length === 0) {
+    target.innerHTML = emptyState('📚', 'Empty knowledge base', 'Decisions, lessons, and insights will be captured here automatically.');
+    return;
+  }
+  target.innerHTML = entries.map(e => `
+    <div style="padding:16px 0; border-bottom:1px solid var(--border)">
+      <div class="text-h3">${e.title}</div>
+      <div class="text-small text-muted mt-2">${formatTime(e.created_at)}</div>
+      <div class="text-body mt-2" style="line-height:1.6">${(e.content || '').slice(0, 300)}${e.content?.length > 300 ? '...' : ''}</div>
+    </div>
+  `).join('');
+}
+
+// ─── SETTINGS ─────────────────────────────────────────
+async function loadSettings() {
+  const { connectors } = await API.get('/api/system/connectors');
+  document.getElementById('settings-connectors').innerHTML = connectors.map(c => `
+    <div class="flex justify-between items-center" style="padding:8px 0; border-bottom:1px solid var(--border)">
+      <div>
+        <div class="text-body">${c.name}</div>
+        <div class="text-small text-dim">${c.type}</div>
+      </div>
+      <span class="badge ${c.status==='live'||c.status==='configured' ? 'badge-emerald' : 'badge-rose'}">${c.status}</span>
+    </div>
+  `).join('');
+}
+
+// ─── CHAT ─────────────────────────────────────────────
+function newChat() {
+  State.chatSessionId = null;
+  document.getElementById('chat-messages').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon">💬</div>
+      <div class="empty-title">New conversation</div>
+      <div class="empty-desc">Ask anything — I'll route to the right agent.</div>
+    </div>
+  `;
+}
+
+function quickPrompt(text) {
+  document.getElementById('chat-input').value = text;
+  sendChatMessage();
+}
+
+async function sendChatMessage() {
+  if (State.isStreaming) return;
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  // Clear empty state
+  const msgs = document.getElementById('chat-messages');
+  if (msgs.querySelector('.empty-state')) msgs.innerHTML = '';
+
+  // Add user message
+  appendMessage('user', text);
+  input.value = '';
+  input.style.height = 'auto';
+
+  // Add empty assistant message
+  const assistantId = 'msg-' + Date.now();
+  appendMessage('assistant', '<span class="cursor-blink"></span>', assistantId);
+
+  State.isStreaming = true;
+  document.getElementById('chat-send-btn').disabled = true;
+
+  try {
+    const res = await fetch('/api/chat/stream', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: text }],
+        agentName: State.chatAgentName,
+        clientId: State.chatClientId,
+        sessionId: State.chatSessionId,
+        devilsAdvocate: State.devilsAdvocate
+      })
+    });
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullText = '';
+
+    const target = document.querySelector(`#${assistantId} .message-bubble`);
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data:')) continue;
+        const data = line.slice(5).trim();
+        if (data === '[DONE]') break;
+        try {
+          const ev = JSON.parse(data);
+          if (ev.type === 'chunk') {
+            fullText += ev.content;
+            target.innerHTML = renderMarkdown(fullText) + '<span class="cursor-blink"></span>';
+            msgs.scrollTop = msgs.scrollHeight;
+          } else if (ev.type === 'tool_use') {
+            const toolDiv = document.createElement('div');
+            toolDiv.className = 'tool-use-indicator';
+            toolDiv.innerHTML = `<i data-lucide="zap" style="width:12px;height:12px"></i> Using <strong>${ev.name}</strong>...`;
+            target.appendChild(toolDiv);
+            refreshIcons();
+          } else if (ev.type === 'done') {
+            State.chatSessionId = ev.sessionId;
+            target.innerHTML = renderMarkdown(fullText) + `
+              <div class="message-actions">
+                <button class="btn btn-ghost btn-sm" onclick="copyToClipboard(this.closest('.message').querySelector('.message-bubble').innerText)"><i data-lucide="copy" style="width:12px;height:12px"></i> Copy</button>
+                <button class="btn btn-ghost btn-sm" onclick="saveToNotion('${assistantId}')"><i data-lucide="save" style="width:12px;height:12px"></i> Save</button>
+              </div>
+            `;
+            refreshIcons();
+          } else if (ev.type === 'error') {
+            target.innerHTML = `<span style="color:var(--rose)">Error: ${ev.message}</span>`;
+          }
+        } catch(e) {}
+      }
+    }
+  } catch(e) {
+    document.querySelector(`#${assistantId} .message-bubble`).innerHTML = `<span style="color:var(--rose)">Error: ${e.message}</span>`;
+  } finally {
+    State.isStreaming = false;
+    document.getElementById('chat-send-btn').disabled = false;
+  }
+}
+
+function appendMessage(role, content, id) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+  if (id) div.id = id;
+  div.innerHTML = `
+    <div class="message-avatar">${role === 'user' ? '👤' : '🤖'}</div>
+    <div class="message-body">
+      <div class="message-bubble">${role === 'user' ? escapeHtml(content) : content}</div>
+      <div class="message-time">${new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</div>
+    </div>
+  `;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  refreshIcons();
+}
+
+function toggleDevilsAdvocate() {
+  State.devilsAdvocate = !State.devilsAdvocate;
+  document.getElementById('devil-toggle').classList.toggle('active', State.devilsAdvocate);
+}
+
+function toggleClientSelector() {
+  document.getElementById('selector-title').textContent = 'Select Client Context';
+  const opts = [{ id: null, name: 'Manthan (general)' }, ...State.clients];
+  document.getElementById('selector-body').innerHTML = opts.map(c => `
+    <div class="agent-card" onclick="selectClient('${c.id || ''}', '${c.name}')">
+      <div class="agent-icon">${c.id ? c.name[0] : '🏢'}</div>
+      <div class="agent-meta">
+        <div class="agent-name">${c.name}</div>
+        ${c.industry ? `<div class="agent-desc">${c.industry}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('selector-modal').classList.add('open');
+}
+
+function selectClient(id, name) {
+  State.chatClientId = id || null;
+  document.getElementById('chat-client-label').textContent = name;
+  closeSelector();
+}
+
+function toggleAgentSelector() {
+  document.getElementById('selector-title').textContent = 'Select Agent';
+  const agents = [
+    { name: 'orchestrator', label: 'Auto (orchestrator)' },
+    { name: 'brand-intelligence', label: 'Brand Intelligence' },
+    { name: 'content-strategy', label: 'Content Strategy' },
+    { name: 'lead-qualifier', label: 'Lead Qualifier' },
+    { name: 'outreach', label: 'Outreach' },
+    { name: 'morning-brief', label: 'Morning Brief' },
+    { name: 'delivery-qa', label: 'Delivery QA' },
+    { name: 'finance-tracker', label: 'Finance Tracker' },
+    { name: 'system-auditor', label: 'System Auditor' },
+    { name: 'crisis-monitor', label: 'Crisis Monitor' },
+  ];
+  document.getElementById('selector-body').innerHTML = agents.map(a => `
+    <div class="agent-card" onclick="selectAgent('${a.name}', '${a.label}')">
+      <div class="agent-icon">🤖</div>
+      <div class="agent-meta"><div class="agent-name">${a.label}</div></div>
+    </div>
+  `).join('');
+  document.getElementById('selector-modal').classList.add('open');
+}
+
+function selectAgent(name, label) {
+  State.chatAgentName = name;
+  document.getElementById('chat-agent-label').textContent = label;
+  closeSelector();
+}
+
+function closeSelector() { document.getElementById('selector-modal').classList.remove('open'); }
+
+async function saveToNotion(messageId) {
+  const content = document.querySelector(`#${messageId} .message-bubble`).innerText;
+  await API.post('/api/outputs/save', {
+    content, title: 'Chat output ' + new Date().toLocaleString(),
+    sessionId: State.chatSessionId, clientId: State.chatClientId,
+    agentName: State.chatAgentName, saveToNotion: true
+  });
+  toast('success', 'Saved to Notion');
+}
+
+function exportChat() {
+  const msgs = document.querySelectorAll('#chat-messages .message');
+  let text = `# Manthan Chat Export — ${new Date().toLocaleString()}\n\n`;
+  msgs.forEach(m => {
+    const role = m.classList.contains('user') ? 'You' : 'Manthan';
+    text += `**${role}:**\n${m.querySelector('.message-bubble').innerText}\n\n---\n\n`;
+  });
+  const blob = new Blob([text], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `manthan-chat-${Date.now()}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── ONBOARDING ───────────────────────────────────────
+function openOnboardingWizard() {
+  const picker = document.getElementById('gradient-picker');
+  picker.innerHTML = GRADIENTS.map((g, i) =>
+    `<div class="gradient-swatch ${i === State.selectedGradient ? 'selected' : ''}" style="background:${g}" onclick="selectGradient(${i})"></div>`
+  ).join('');
+  document.getElementById('onboarding-modal').classList.add('open');
+}
+
+function selectGradient(i) {
+  State.selectedGradient = i;
+  document.querySelectorAll('.gradient-swatch').forEach((s, idx) => s.classList.toggle('selected', idx === i));
+}
+
+function closeOnboarding() { document.getElementById('onboarding-modal').classList.remove('open'); }
+
+async function submitOnboarding() {
+  const data = {
+    name: document.getElementById('ob-name').value.trim(),
+    brand_name: document.getElementById('ob-brand').value.trim(),
+    industry: document.getElementById('ob-industry').value.trim(),
+    tone: document.getElementById('ob-tone').value.trim(),
+    channels: document.getElementById('ob-channels').value.trim(),
+    rate_card: JSON.stringify({ monthly_retainer: parseFloat(document.getElementById('ob-retainer').value) || 0 }),
+    whatsapp_number: document.getElementById('ob-whatsapp').value.trim(),
+    brand_gradient: GRADIENTS[State.selectedGradient]
+  };
+  if (!data.name) return toast('error', 'Client name is required');
+  const btn = document.getElementById('onboarding-submit');
+  btn.classList.add('loading');
+  try {
+    await API.post('/api/clients', data);
+    toast('success', `${data.name} onboarded! Setting up brand profile...`);
+    closeOnboarding();
+    document.querySelectorAll('input[id^=ob-]').forEach(i => i.value = '');
+    setTimeout(() => loadScreen(State.currentScreen), 500);
+  } catch(e) { toast('error', e.message); } finally { btn.classList.remove('loading'); }
+}
+
+// ─── NOTIFICATIONS ────────────────────────────────────
+async function refreshNotificationBadges() {
+  try {
+    const { unread } = await API.get('/api/notifications');
+    const badge = document.getElementById('notif-count');
+    if (unread > 0) { badge.textContent = unread; badge.style.display = 'flex'; }
+    else badge.style.display = 'none';
+  } catch(e) {}
+
+  try {
+    const { approvals } = await API.get('/api/approvals');
+    const pending = approvals.filter(a => (a.approval_status || a.status) === 'pending' || (a.approval_status || a.status) === 'Pending Review').length;
+    const ab = document.getElementById('approvals-badge');
+    if (pending > 0) { ab.textContent = pending; ab.style.display = ''; } else ab.style.display = 'none';
+  } catch(e) {}
+}
+
+async function toggleNotifications() {
+  const panel = document.getElementById('notif-panel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) {
+    const { notifications } = await API.get('/api/notifications');
+    const list = document.getElementById('notif-list');
+    if (notifications.length === 0) {
+      list.innerHTML = '<div class="empty-state" style="padding:32px"><div class="empty-icon">🔔</div><div class="empty-desc">All clear!</div></div>';
+    } else {
+      list.innerHTML = notifications.map(n => `
+        <div class="notif-item ${n.read ? '' : 'unread'}">
+          <div class="flex gap-3">
+            <span class="notif-dot"></span>
+            <div class="flex-1 min-w-0">
+              <div class="notif-title">${n.title}</div>
+              ${n.message ? `<div class="notif-msg">${n.message.slice(0, 80)}</div>` : ''}
+              <div class="notif-time">${formatTime(n.created_at)}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+async function markAllRead() {
+  await API.post('/api/notifications/mark-read', {});
+  refreshNotificationBadges();
+  toggleNotifications();
+}
+
+// ─── GLOBAL SEARCH ────────────────────────────────────
+function openSearch() {
+  document.getElementById('search-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('search-input').focus(), 100);
+}
+function closeSearch() { document.getElementById('search-overlay').classList.remove('open'); }
+
+document.getElementById('search-input').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase().trim();
+  const results = document.getElementById('search-results');
+  if (!q) { results.innerHTML = ''; return; }
+  const items = [];
+  // Search clients
+  State.clients.filter(c => c.name?.toLowerCase().includes(q)).forEach(c =>
+    items.push({ icon: '👥', title: c.name, sub: 'Client', action: () => { closeSearch(); openClientDetail(c.id); } }));
+  // Search nav
+  const navItems = ['dashboard','clients','chat','approvals','deliverables','content-calendar','reports','lead-pipeline','workflows','workbench','agents-console','finance','knowledge-base','connector-map','brands','settings'];
+  navItems.filter(n => n.includes(q)).forEach(n =>
+    items.push({ icon: '→', title: formatScreenName(n), sub: 'Navigate', action: () => { closeSearch(); navigate(n); } }));
+
+  results.innerHTML = items.map((it, i) => `
+    <div class="search-result-item" onclick="(${it.action.toString()})()">
+      <span class="search-result-icon">${it.icon}</span>
+      <div>
+        <div class="search-result-title">${it.title}</div>
+        <div class="search-result-sub">${it.sub}</div>
+      </div>
+    </div>
+  `).join('');
+});
+
+// ─── KEYBOARD SHORTCUTS ───────────────────────────────
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+  else if ((e.metaKey || e.ctrlKey) && e.key === 'b') { e.preventDefault(); navigate('morning-brief'); }
+  else if ((e.metaKey || e.ctrlKey) && e.key === 'f') { e.preventDefault(); navigate('finance'); }
+  else if ((e.metaKey || e.ctrlKey) && e.key === '/') { e.preventDefault(); navigate('chat'); }
+  else if (e.key === 'Escape') {
+    closeSearch();
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+    document.querySelectorAll('.notif-panel.open').forEach(m => m.classList.remove('open'));
+  }
+});
+
+// Chat input: Enter sends, Shift+Enter = newline
+document.getElementById('chat-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendChatMessage();
+  }
+});
+document.getElementById('chat-input').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+});
+
+// ─── THEME ────────────────────────────────────────────
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  const isLight = document.body.classList.contains('light');
+  document.getElementById('theme-icon').setAttribute('data-lucide', isLight ? 'sun' : 'moon');
+  refreshIcons();
+}
+
+// ─── HELPERS ──────────────────────────────────────────
+function emptyState(icon, title, desc, btnText, btnAction) {
+  return `
+    <div class="empty-state">
+      <div class="empty-icon">${icon}</div>
+      <div class="empty-title">${title}</div>
+      <div class="empty-desc">${desc}</div>
+      ${btnText ? `<button class="btn btn-primary mt-4" onclick="${btnAction}">${btnText}</button>` : ''}
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return s.replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+
+function renderMarkdown(text) {
+  if (!text) return '';
+  let html = escapeHtml(text);
+  html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => `<pre><code>${code}</code></pre>`);
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+  html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+  html = html.replace(/\n\n/g, '</p><p>');
+  html = '<p>' + html + '</p>';
+  return html;
+}
+
+function formatTime(t) {
+  if (!t) return '';
+  const d = new Date(t);
+  const now = new Date();
+  const diff = (now - d) / 1000;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  if (diff < 604800) return Math.floor(diff/86400) + 'd ago';
+  return d.toLocaleDateString('en-IN');
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text);
+  toast('success', 'Copied to clipboard');
+}
+
+function toast(type, msg) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<i data-lucide="${type==='success'?'check-circle':type==='error'?'alert-circle':type==='warning'?'alert-triangle':'info'}" style="width:16px;height:16px"></i><span>${msg}</span>`;
+  c.appendChild(t);
+  refreshIcons();
+  setTimeout(() => t.remove(), 4000);
+}
+
+function refreshIcons() { if (window.lucide) lucide.createIcons(); }
+
+// ─── INIT ─────────────────────────────────────────────
+async function init() {
+  refreshIcons();
+  await loadScreen('dashboard');
+  refreshNotificationBadges();
+  // Poll every 30s for updates
+  setInterval(refreshNotificationBadges, 30000);
+}
+
+init();
+</script>
+
+</body>
+</html>
